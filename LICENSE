@@ -1,0 +1,18 @@
+treesitter-rails is based on highlighting patterns from vim-rails.
+
+vim-rails is Copyright (c) Tim Pope and distributed under the same terms as
+Vim itself. See `:help license` in Vim.
+
+The Vim License is a permissive, GPL-compatible free software license. The
+full text of the Vim License can be found at:
+https://vimhelp.org/uganda.txt.html#license
+
+treesitter-rails additions are Copyright (c) 2026 and distributed under the
+same terms.
+
+Summary of the Vim License:
+- Free to use and distribute
+- Modifications must be distributed under a compatible license
+- Must include this license notice
+- The Vim license encourages (but does not require) donations to charity,
+  specifically ICCF Holland (https://iccf-holland.org/)

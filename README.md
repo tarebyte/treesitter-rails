@@ -221,4 +221,6 @@ Contributions are welcome! Please feel free to submit issues and pull requests.
 
 ## License
 
-MIT
+Distributed under the same terms as Vim itself. See [LICENSE](LICENSE).
+
+This project is based on highlighting patterns from [vim-rails](https://github.com/tpope/vim-rails) by Tim Pope.
