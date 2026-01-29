@@ -39,5 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Lua API for programmatic control
 - Configurable highlight priority (default 125)
 - Option to enable only specific contexts
+- GitHub Actions CI (tests on Neovim stable/nightly, luacheck, StyLua)
 
 [0.1.0]: https://github.com/tarebyte/treesitter-rails/releases/tag/v0.1.0
