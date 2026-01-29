@@ -46,3 +46,7 @@ vim.api.nvim_create_user_command('TreesitterRailsReload', function()
   require('treesitter-rails').reload()
   print('treesitter-rails queries reloaded')
 end, { desc = 'Reload treesitter-rails queries (for development)' })
+
+vim.api.nvim_create_user_command('TreesitterRailsInspect', function()
+  require('treesitter-rails').inspect()
+end, { desc = 'Inspect treesitter-rails captures at cursor position' })

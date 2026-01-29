@@ -232,4 +232,59 @@ function M.refresh(bufnr)
   end
 end
 
+--- Inspect Rails highlights at cursor position
+--- @param bufnr number|nil Buffer number (nil for current)
+--- @return table[] List of captures at cursor
+function M.inspect_at_cursor(bufnr)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
+
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  row = row - 1 -- Convert to 0-indexed
+
+  local tree = get_tree(bufnr)
+  if not tree then
+    return {}
+  end
+
+  local root = tree:root()
+  local ctx = context.get_buffer_context(bufnr)
+  local results = {}
+
+  -- Helper to find captures at position
+  local function find_captures(query, source_name)
+    if not query then
+      return
+    end
+
+    for id, node, _ in query:iter_captures(root, bufnr, row, row + 1) do
+      local name = query.captures[id]
+      local start_row, start_col, end_row, end_col = node:range()
+
+      -- Check if cursor is within this node
+      local in_range = (row > start_row or (row == start_row and col >= start_col))
+        and (row < end_row or (row == end_row and col < end_col))
+
+      if in_range and (name:match('^function%.') or name:match('^keyword%.') or name:match('^variable%.')) then
+        table.insert(results, {
+          capture = '@' .. name .. '.ruby',
+          node_type = node:type(),
+          text = vim.treesitter.get_node_text(node, bufnr),
+          range = { start_row, start_col, end_row, end_col },
+          source = source_name,
+        })
+      end
+    end
+  end
+
+  -- Check common query
+  find_captures(queries.get_common(), 'common')
+
+  -- Check context-specific query
+  if ctx then
+    find_captures(queries.get(ctx), ctx)
+  end
+
+  return results
+end
+
 return M

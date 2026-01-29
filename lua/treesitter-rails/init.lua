@@ -171,4 +171,23 @@ function M.info()
   end
 end
 
+--- Inspect Rails highlights at cursor position
+--- @param bufnr number|nil Buffer number (nil for current)
+function M.inspect(bufnr)
+  local results = highlight.inspect_at_cursor(bufnr)
+
+  if #results == 0 then
+    print('No treesitter-rails captures at cursor')
+    return
+  end
+
+  print('treesitter-rails captures at cursor:')
+  for _, r in ipairs(results) do
+    print(string.format('  %s', r.capture))
+    print(string.format('    text: %q', r.text))
+    print(string.format('    node: %s', r.node_type))
+    print(string.format('    source: %s', r.source))
+  end
+end
+
 return M
