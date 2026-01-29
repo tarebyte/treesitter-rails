@@ -108,10 +108,7 @@ function M.set_context(bufnr, ctx)
     context.cache[bufnr] = ctx
     highlight.refresh(bufnr)
   else
-    vim.notify(
-      string.format('[treesitter-rails] Invalid context: %s', ctx),
-      vim.log.levels.WARN
-    )
+    vim.notify(string.format('[treesitter-rails] Invalid context: %s', ctx), vim.log.levels.WARN)
   end
 end
 

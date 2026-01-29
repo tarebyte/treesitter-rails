@@ -1,5 +1,6 @@
 # treesitter-rails
 
+[![CI](https://github.com/tarebyte/treesitter-rails/actions/workflows/ci.yml/badge.svg)](https://github.com/tarebyte/treesitter-rails/actions/workflows/ci.yml)
 [![Neovim](https://img.shields.io/badge/Neovim-0.9+-blueviolet.svg?logo=neovim)](https://neovim.io)
 [![License](https://img.shields.io/badge/License-Vim-green.svg)](LICENSE)
 

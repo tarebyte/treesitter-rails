@@ -6,6 +6,8 @@ A Neovim plugin that provides Rails-specific Tree-sitter syntax highlighting.
 
 ```
 treesitter-rails/
+├── .github/workflows/
+│   └── ci.yml             # GitHub Actions CI
 ├── doc/
 │   └── treesitter-rails.txt  # Vim help documentation
 ├── lua/treesitter-rails/
@@ -33,6 +35,8 @@ treesitter-rails/
 │   ├── context_spec.lua   # Context detection tests
 │   ├── queries_spec.lua   # Query loading tests
 │   └── common_patterns_spec.lua  # Common query pattern tests
+├── .luacheckrc            # Luacheck configuration
+├── stylua.toml            # StyLua formatter configuration
 └── README.md
 ```
 

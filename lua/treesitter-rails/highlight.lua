@@ -264,7 +264,10 @@ function M.inspect_at_cursor(bufnr)
       local in_range = (row > start_row or (row == start_row and col >= start_col))
         and (row < end_row or (row == end_row and col < end_col))
 
-      if in_range and (name:match('^function%.') or name:match('^keyword%.') or name:match('^variable%.')) then
+      if
+        in_range
+        and (name:match('^function%.') or name:match('^keyword%.') or name:match('^variable%.'))
+      then
         table.insert(results, {
           capture = '@' .. name .. '.ruby',
           node_type = node:type(),
