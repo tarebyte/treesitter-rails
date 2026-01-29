@@ -1,10 +1,3 @@
---- Migration query patterns for treesitter-rails
---- Covers schema definitions, table operations, and migration DSL
---- @module treesitter-rails.queries.migration
-
-local M = {}
-
-M.query = [[
 ; =============================================================================
 ; Table Operations
 ; =============================================================================
@@ -249,6 +242,3 @@ M.query = [[
   (#any-of? @function.macro.rails
     "disable_ddl_transaction"
     "disable_ddl_transaction!")))
-]]
-
-return M

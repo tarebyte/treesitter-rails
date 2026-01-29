@@ -1,0 +1,304 @@
+*treesitter-rails.txt*  Rails-specific Tree-sitter highlighting for Neovim
+
+Author: tarebyte
+License: Same terms as Vim itself (see |license|)
+
+==============================================================================
+CONTENTS                                            *treesitter-rails-contents*
+
+    1. Introduction ........................... |treesitter-rails-introduction|
+    2. Requirements ........................... |treesitter-rails-requirements|
+    3. Installation ........................... |treesitter-rails-installation|
+    4. Configuration .......................... |treesitter-rails-configuration|
+    5. Commands ............................... |treesitter-rails-commands|
+    6. Context Detection ...................... |treesitter-rails-context|
+    7. Highlight Groups ....................... |treesitter-rails-highlights|
+    8. API .................................... |treesitter-rails-api|
+    9. Development ............................ |treesitter-rails-development|
+
+==============================================================================
+1. INTRODUCTION                                 *treesitter-rails-introduction*
+
+treesitter-rails provides context-aware syntax highlighting for Rails projects
+using Neovim's Tree-sitter integration. It detects file types (models,
+controllers, views, etc.) based on file paths and applies appropriate
+highlighting for Rails DSL methods, macros, and patterns.
+
+Features:~
+- Context-aware highlighting based on file location
+- Comprehensive Rails DSL coverage (models, controllers, views, etc.)
+- ActiveSupport patterns (time helpers, delegation, class attributes)
+- Packwerk/packs support for modular Rails monoliths
+- High performance using Neovim's decoration provider API
+
+==============================================================================
+2. REQUIREMENTS                                 *treesitter-rails-requirements*
+
+- Neovim 0.9 or later
+- nvim-treesitter with Ruby parser installed
+
+To install the Ruby parser:
+>lua
+    :TSInstall ruby
+<
+
+==============================================================================
+3. INSTALLATION                                 *treesitter-rails-installation*
+
+lazy.nvim:~
+>lua
+    {
+      'tarebyte/treesitter-rails',
+      dependencies = { 'nvim-treesitter/nvim-treesitter' },
+      ft = 'ruby',
+      config = function()
+        require('treesitter-rails').setup()
+      end,
+    }
+<
+
+packer.nvim:~
+>lua
+    use {
+      'tarebyte/treesitter-rails',
+      requires = { 'nvim-treesitter/nvim-treesitter' },
+      ft = 'ruby',
+      config = function()
+        require('treesitter-rails').setup()
+      end,
+    }
+<
+
+vim-plug:~
+>vim
+    Plug 'nvim-treesitter/nvim-treesitter'
+    Plug 'tarebyte/treesitter-rails'
+
+    " In your init.lua or after/plugin:
+    lua require('treesitter-rails').setup()
+<
+
+==============================================================================
+4. CONFIGURATION                               *treesitter-rails-configuration*
+
+                                                    *treesitter-rails.setup()*
+Call `require('treesitter-rails').setup()` with an optional configuration
+table:
+>lua
+    require('treesitter-rails').setup({
+      -- Enable/disable the plugin (default: true)
+      enabled = true,
+
+      -- Highlight priority, higher than default treesitter (100)
+      -- Increase if highlights are being overridden
+      priority = 125,
+
+      -- Contexts to enable (nil means all contexts)
+      -- Available: 'model', 'controller', 'view', 'migration', 'routes',
+      --            'job', 'mailer', 'minitest', 'rspec'
+      contexts = nil,
+    })
+<
+
+Example: Enable only specific contexts~
+>lua
+    require('treesitter-rails').setup({
+      contexts = { 'model', 'controller', 'view' },
+    })
+<
+
+==============================================================================
+5. COMMANDS                                         *treesitter-rails-commands*
+
+                                                              *:TSRailsEnable*
+:TSRailsEnable          Enable treesitter-rails highlighting.
+
+                                                             *:TSRailsDisable*
+:TSRailsDisable         Disable treesitter-rails highlighting.
+
+                                                              *:TSRailsToggle*
+:TSRailsToggle          Toggle highlighting on/off.
+
+                                                             *:TSRailsRefresh*
+:TSRailsRefresh         Refresh highlighting for the current buffer.
+
+                                                                *:TSRailsInfo*
+:TSRailsInfo            Show plugin status and attached buffers.
+
+                                                             *:TSRailsContext*
+:TSRailsContext         Show the detected Rails context for the current
+                        buffer (e.g., "model", "controller").
+
+                                                              *:TSRailsReload*
+:TSRailsReload          Reload query files. Useful during development.
+
+                                                             *:TSRailsInspect*
+:TSRailsInspect         Inspect treesitter-rails captures at the cursor
+                        position. Useful for debugging highlighting.
+
+==============================================================================
+6. CONTEXT DETECTION                               *treesitter-rails-context*
+
+Files are assigned contexts based on their path. The plugin looks for these
+patterns anywhere in the file path, supporting both standard Rails structure
+and modular architectures like Packwerk.
+
+Path patterns and their contexts:~
+
+    Path Pattern                      Context~
+    -------------------------------------------------------------------
+    app/models/**/*.rb                model
+    app/controllers/**/*.rb           controller
+    app/views/**/*                    view
+    app/helpers/**/*.rb               view
+    app/jobs/**/*.rb                  job
+    app/mailers/**/*.rb               mailer
+    db/migrate/**/*.rb                migration
+    db/schema.rb                      migration
+    config/routes.rb                  routes
+    config/routes/**/*.rb             routes
+    test/**/*_test.rb                 minitest
+    spec/**/*_spec.rb                 rspec
+
+                                            *treesitter-rails-packwerk*
+Packwerk / Packs Support~
+
+The plugin automatically works with modular Rails monoliths:
+>
+    packs/billing/app/models/invoice.rb        → model
+    packages/auth/app/controllers/sessions.rb  → controller
+    components/core/app/jobs/sync_job.rb       → job
+    engines/payments/spec/models/card_spec.rb  → rspec
+<
+
+==============================================================================
+7. HIGHLIGHT GROUPS                             *treesitter-rails-highlights*
+
+The plugin defines semantic highlight groups that link to standard Tree-sitter
+captures. You can customize these in your colorscheme or config.
+
+    Group                               Links To           Used For~
+    -------------------------------------------------------------------
+    @function.macro.rails.association   @function.macro    belongs_to, has_many
+    @function.macro.rails.validation    @function.macro    validates, etc.
+    @function.macro.rails.callback      @function.macro    before_save, etc.
+    @function.macro.rails.attribute     @function.macro    enum, scope, etc.
+    @function.macro.rails.filter        @function.macro    before_action, etc.
+    @keyword.rails.response             @keyword           render, redirect_to
+    @variable.builtin.rails             @variable.builtin  params, session
+    @function.rails.helper              @function.builtin  link_to, form_with
+    @keyword.rails.route                @keyword           resources, get
+    @keyword.rails.schema               @keyword           create_table
+    @function.rails.assertion           @function.builtin  assert_equal, expect
+    @function.macro.rails.test          @function.macro    describe, it, let
+
+                                       *treesitter-rails-highlights-custom*
+Customizing Highlights~
+
+Override the default links in your colorscheme or config:
+>lua
+    vim.api.nvim_set_hl(0, '@function.macro.rails.association', {
+      fg = '#e06c75',
+      bold = true,
+    })
+    vim.api.nvim_set_hl(0, '@function.macro.rails.callback', {
+      link = 'Special',
+    })
+<
+
+==============================================================================
+8. API                                                   *treesitter-rails-api*
+
+                                                  *treesitter-rails.enable()*
+treesitter-rails.enable()
+    Enable the plugin.
+
+                                                 *treesitter-rails.disable()*
+treesitter-rails.disable()
+    Disable the plugin.
+
+                                                  *treesitter-rails.toggle()*
+treesitter-rails.toggle()
+    Toggle the plugin on/off.
+
+                                              *treesitter-rails.is_enabled()*
+treesitter-rails.is_enabled()
+    Returns `true` if the plugin is enabled.
+
+                                             *treesitter-rails.get_context()*
+treesitter-rails.get_context([{bufnr}])
+    Get the detected Rails context for a buffer.
+    Returns the context string (e.g., "model") or `nil`.
+    If {bufnr} is omitted, uses the current buffer.
+
+                                                 *treesitter-rails.refresh()*
+treesitter-rails.refresh()
+    Refresh highlighting for the current buffer.
+
+                                                *treesitter-rails.contexts()*
+treesitter-rails.contexts()
+    Returns a list of available context names:
+    `{ 'model', 'controller', 'view', 'migration', 'routes',
+      'job', 'mailer', 'minitest', 'rspec' }`
+
+                                                  *treesitter-rails.status()*
+treesitter-rails.status()
+    Returns a table with status information:
+>lua
+    {
+      enabled = true,
+      priority = 125,
+      contexts = nil,  -- or list of enabled contexts
+      attached_buffers = { 1, 3, 5 },
+    }
+<
+
+                                                    *treesitter-rails.info()*
+treesitter-rails.info()
+    Print status information to messages.
+
+                                                  *treesitter-rails.reload()*
+treesitter-rails.reload()
+    Reload all query files. Useful during development.
+
+                                                 *treesitter-rails.inspect()*
+treesitter-rails.inspect()
+    Inspect treesitter-rails captures at the cursor position.
+
+==============================================================================
+9. DEVELOPMENT                                   *treesitter-rails-development*
+
+Running Tests~
+
+Run all tests:
+>bash
+    ./tests/run.sh
+<
+
+Run individual test files:
+>bash
+    nvim --headless -u NONE \
+      -c "set runtimepath+=." \
+      -c "luafile tests/context_spec.lua" \
+      -c "q"
+<
+
+                                          *treesitter-rails-adding-patterns*
+Adding New Patterns~
+
+1. Identify the context (model, controller, etc.)
+2. Edit the corresponding `.scm` file in `queries/`
+   (e.g., `queries/model.scm`)
+3. Use Tree-sitter query syntax with the plugin's capture naming convention
+4. Test with |:TSRailsReload|
+
+Testing Queries~
+
+Use |:InspectTree| (Neovim 0.9+) to see the Tree-sitter AST for the current
+buffer and craft appropriate queries.
+
+Use |:TSRailsInspect| to see what captures treesitter-rails applies at the
+cursor position.
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:

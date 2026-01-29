@@ -1,10 +1,3 @@
---- Job query patterns for treesitter-rails
---- Covers ActiveJob DSL
---- @module treesitter-rails.queries.job
-
-local M = {}
-
-M.query = [[
 ; =============================================================================
 ; Queue Configuration
 ; =============================================================================
@@ -116,6 +109,3 @@ M.query = [[
     "scheduled_at"
     "executions"
     "exception_executions"))
-]]
-
-return M

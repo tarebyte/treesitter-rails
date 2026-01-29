@@ -6,22 +6,26 @@ A Neovim plugin that provides Rails-specific Tree-sitter syntax highlighting.
 
 ```
 treesitter-rails/
+├── doc/
+│   └── treesitter-rails.txt  # Vim help documentation
 ├── lua/treesitter-rails/
 │   ├── init.lua           # Main module, setup, enable/disable
 │   ├── config.lua         # Configuration and highlight group definitions
 │   ├── context.lua        # File path → context detection
 │   ├── highlight.lua      # Decoration provider implementation
 │   └── queries/
-│       ├── init.lua       # Query loading and caching
-│       ├── common.lua     # Patterns for all Rails contexts
-│       ├── model.lua      # Model-specific patterns
-│       ├── controller.lua # Controller-specific patterns
-│       ├── view.lua       # View/helper-specific patterns
-│       ├── migration.lua  # Migration/schema patterns
-│       ├── routes.lua     # Routes DSL patterns
-│       ├── job.lua        # ActiveJob patterns
-│       ├── mailer.lua     # ActionMailer patterns
-│       └── test.lua       # Minitest and RSpec patterns
+│       └── init.lua       # Query loading and caching
+├── queries/               # Tree-sitter query files (.scm)
+│   ├── common.scm         # Patterns for all Rails contexts
+│   ├── model.scm          # Model-specific patterns
+│   ├── controller.scm     # Controller-specific patterns
+│   ├── view.scm           # View/helper-specific patterns
+│   ├── migration.scm      # Migration/schema patterns
+│   ├── routes.scm         # Routes DSL patterns
+│   ├── job.scm            # ActiveJob patterns
+│   ├── mailer.scm         # ActionMailer patterns
+│   ├── minitest.scm       # Minitest patterns
+│   └── rspec.scm          # RSpec patterns
 ├── plugin/
 │   └── treesitter-rails.lua  # Auto-setup and user commands
 ├── tests/
@@ -52,22 +56,22 @@ Files are assigned contexts based on path patterns. The detection looks for patt
 
 ### Query System
 
-Each context has a Lua module that returns a Tree-sitter query string. Queries are parsed and cached on first use.
+Each context has a `.scm` file in the `queries/` directory containing Tree-sitter query patterns. Queries are read from disk and parsed once, then cached.
 
-**Important**: The `common.lua` query is applied to ALL Rails contexts in addition to context-specific queries. It contains ActiveSupport patterns like time helpers, delegation, etc.
+**Important**: The `common.scm` query is applied to ALL Rails contexts in addition to context-specific queries. It contains ActiveSupport patterns like time helpers, delegation, etc.
 
 ## Development Guidelines
 
 ### Adding New Patterns
 
 1. Identify the appropriate context (model, controller, etc.)
-2. Edit the corresponding file in `lua/treesitter-rails/queries/`
+2. Edit the corresponding file in `queries/` (e.g., `queries/model.scm`)
 3. Use Tree-sitter query syntax with the naming convention:
    - `@function.macro.rails.*` for DSL macros
    - `@keyword.rails.*` for keyword-like methods
    - `@variable.builtin.rails` for built-in variables
    - `@function.rails.helper` for helper methods
-4. Test with `:TreesitterRailsReload`
+4. Test with `:TSRailsReload`
 
 ### Testing Queries
 
@@ -97,7 +101,7 @@ The plugin is designed to layer ON TOP of treesitter-ruby, not conflict with it:
 
 ### Common Query Restrictions
 
-The `common.lua` query should NOT include patterns for standard Ruby methods:
+The `common.scm` query should NOT include patterns for standard Ruby methods:
 
 - ❌ `include`, `extend`, `prepend` (standard Ruby)
 - ❌ `autoload` (standard Ruby)
@@ -109,13 +113,14 @@ The `common.lua` query should NOT include patterns for standard Ruby methods:
 
 | Command | Description |
 |---------|-------------|
-| `:TreesitterRailsEnable` | Enable highlighting |
-| `:TreesitterRailsDisable` | Disable highlighting |
-| `:TreesitterRailsToggle` | Toggle highlighting |
-| `:TreesitterRailsRefresh` | Refresh current buffer |
-| `:TreesitterRailsInfo` | Show status |
-| `:TreesitterRailsContext` | Show detected context |
-| `:TreesitterRailsReload` | Reload queries (dev) |
+| `:TSRailsEnable` | Enable highlighting |
+| `:TSRailsDisable` | Disable highlighting |
+| `:TSRailsToggle` | Toggle highlighting |
+| `:TSRailsRefresh` | Refresh current buffer |
+| `:TSRailsInfo` | Show status |
+| `:TSRailsContext` | Show detected context |
+| `:TSRailsReload` | Reload queries (dev) |
+| `:TSRailsInspect` | Inspect captures at cursor |
 
 ## Highlight Groups
 

@@ -1,5 +1,5 @@
 --- Tests for common query patterns
---- Verifies that common.lua doesn't include standard Ruby patterns
+--- Verifies that common.scm doesn't include standard Ruby patterns
 --- Run with: nvim --headless -c "luafile tests/common_patterns_spec.lua" -c "q"
 
 local function test(name, fn)
@@ -26,11 +26,11 @@ end
 
 print('=== Common Query Pattern Tests ===\n')
 
-local common = require('treesitter-rails.queries.common')
-local query_string = common.query
+local queries = require('treesitter-rails.queries')
+local query_string = queries.get_query_string('common')
 
 -- Verify standard Ruby patterns are NOT included
-print('-- Patterns that should NOT be in common.lua --\n')
+print('-- Patterns that should NOT be in common.scm --\n')
 
 test('does not include generic "include"', function()
   -- Check it doesn't have a simple include pattern (without ActiveSupport::Concern context)
@@ -50,7 +50,7 @@ test('does not include "eager_autoload"', function()
 end)
 
 -- Verify Rails-specific patterns ARE included
-print('\n-- Patterns that SHOULD be in common.lua --\n')
+print('\n-- Patterns that SHOULD be in common.scm --\n')
 
 test('includes delegate', function()
   assert_contains(query_string, '"delegate"', 'should include delegate')

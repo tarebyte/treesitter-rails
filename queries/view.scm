@@ -1,10 +1,3 @@
---- View query patterns for treesitter-rails
---- Covers form helpers, URL helpers, asset helpers, and view utilities
---- @module treesitter-rails.queries.view
-
-local M = {}
-
-M.query = [[
 ; =============================================================================
 ; Form Helpers
 ; =============================================================================
@@ -362,6 +355,3 @@ M.query = [[
     "cookies"
     "flash"
     "assigns"))
-]]
-
-return M

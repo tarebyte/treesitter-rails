@@ -1,10 +1,3 @@
---- Model query patterns for treesitter-rails
---- Covers ActiveRecord associations, validations, callbacks, scopes, etc.
---- @module treesitter-rails.queries.model
-
-local M = {}
-
-M.query = [[
 ; =============================================================================
 ; Associations
 ; =============================================================================
@@ -18,17 +11,6 @@ M.query = [[
     "has_many"
     "has_and_belongs_to_many"
     "composed_of")))
-
-; has_one :through, has_many :through
-((call
-  method: (identifier) @function.macro.rails.association
-  (#any-of? @function.macro.rails.association
-    "has_one"
-    "has_many")
-  arguments: (argument_list
-    (pair
-      key: (hash_key_symbol) @_key
-      (#eq? @_key "through")))))
 
 ; =============================================================================
 ; Validations
@@ -207,19 +189,6 @@ M.query = [[
   (#eq? @function.macro.rails.attribute "has_secure_token")))
 
 ; =============================================================================
-; Concerns and extensions
-; =============================================================================
-
-((call
-  method: (identifier) @function.macro.rails
-  (#any-of? @function.macro.rails
-    "included"
-    "class_methods"
-    "extend"
-    "include"
-    "prepend")))
-
-; =============================================================================
 ; ActiveRecord configuration
 ; =============================================================================
 
@@ -247,16 +216,9 @@ M.query = [[
       "inheritance_column"))))
 
 ; =============================================================================
-; ActiveModel modules
+; ActiveRecord attribute macros
 ; =============================================================================
 
 ((call
   method: (identifier) @function.macro.rails
-  (#any-of? @function.macro.rails
-    "attr_readonly"
-    "attr_accessor"
-    "attr_reader"
-    "attr_writer")))
-]]
-
-return M
+  (#eq? @function.macro.rails "attr_readonly")))

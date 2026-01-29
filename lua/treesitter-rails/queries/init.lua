@@ -7,43 +7,58 @@ local M = {}
 --- @type table<string, vim.treesitter.Query|false>
 M.cache = {}
 
---- Map of context names to their query module names
+--- Get the plugin's root directory
+--- @return string
+local function get_plugin_root()
+  -- Get the path of this file and navigate up to plugin root
+  local source = debug.getinfo(1, 'S').source:sub(2)
+  -- source is: .../lua/treesitter-rails/queries/init.lua
+  -- we want: .../
+  return vim.fn.fnamemodify(source, ':h:h:h:h')
+end
+
+--- Map of context names to their query file names
 --- @type table<string, string>
-M.query_modules = {
-  common = 'treesitter-rails.queries.common',
-  model = 'treesitter-rails.queries.model',
-  controller = 'treesitter-rails.queries.controller',
-  view = 'treesitter-rails.queries.view',
-  migration = 'treesitter-rails.queries.migration',
-  routes = 'treesitter-rails.queries.routes',
-  job = 'treesitter-rails.queries.job',
-  mailer = 'treesitter-rails.queries.mailer',
-  minitest = 'treesitter-rails.queries.test',
-  rspec = 'treesitter-rails.queries.test',
+M.query_files = {
+  common = 'common.scm',
+  model = 'model.scm',
+  controller = 'controller.scm',
+  view = 'view.scm',
+  migration = 'migration.scm',
+  routes = 'routes.scm',
+  job = 'job.scm',
+  mailer = 'mailer.scm',
+  minitest = 'minitest.scm',
+  rspec = 'rspec.scm',
 }
+
+--- Read a query file and return its contents
+--- @param filename string The query file name
+--- @return string|nil query_string The query string or nil
+local function read_query_file(filename)
+  local plugin_root = get_plugin_root()
+  local query_path = plugin_root .. '/queries/' .. filename
+
+  local file = io.open(query_path, 'r')
+  if not file then
+    return nil
+  end
+
+  local content = file:read('*a')
+  file:close()
+  return content
+end
 
 --- Get the query string for a context
 --- @param context string The context name
 --- @return string|nil query_string The query string or nil
 function M.get_query_string(context)
-  local module_name = M.query_modules[context]
-  if not module_name then
+  local filename = M.query_files[context]
+  if not filename then
     return nil
   end
 
-  local ok, query_module = pcall(require, module_name)
-  if not ok or not query_module then
-    return nil
-  end
-
-  -- For test contexts, get the appropriate variant
-  if context == 'minitest' and query_module.minitest then
-    return query_module.minitest
-  elseif context == 'rspec' and query_module.rspec then
-    return query_module.rspec
-  end
-
-  return query_module.query
+  return read_query_file(filename)
 end
 
 --- Get a parsed query for a context
@@ -91,12 +106,9 @@ function M.clear_cache(context)
   end
 end
 
---- Reload all query modules (useful during development)
+--- Reload all queries (useful during development)
 function M.reload()
   M.clear_cache()
-  for _, module_name in pairs(M.query_modules) do
-    package.loaded[module_name] = nil
-  end
 end
 
 return M

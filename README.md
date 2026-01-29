@@ -26,6 +26,10 @@ This plugin provides context-aware highlighting for Rails projects by detecting 
 - Neovim 0.9+
 - [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) with Ruby parser installed
 
+## Documentation
+
+Full documentation is available via `:help treesitter-rails` after installation.
+
 ## Installation
 
 ### lazy.nvim
@@ -94,13 +98,14 @@ require('treesitter-rails').setup({
 
 | Command | Description |
 |---------|-------------|
-| `:TreesitterRailsEnable` | Enable highlighting |
-| `:TreesitterRailsDisable` | Disable highlighting |
-| `:TreesitterRailsToggle` | Toggle highlighting on/off |
-| `:TreesitterRailsRefresh` | Refresh highlighting for current buffer |
-| `:TreesitterRailsInfo` | Show plugin status and attached buffers |
-| `:TreesitterRailsContext` | Show detected context for current buffer |
-| `:TreesitterRailsReload` | Reload queries (for development) |
+| `:TSRailsEnable` | Enable highlighting |
+| `:TSRailsDisable` | Disable highlighting |
+| `:TSRailsToggle` | Toggle highlighting on/off |
+| `:TSRailsRefresh` | Refresh highlighting for current buffer |
+| `:TSRailsInfo` | Show plugin status and attached buffers |
+| `:TSRailsContext` | Show detected context for current buffer |
+| `:TSRailsReload` | Reload queries (for development) |
+| `:TSRailsInspect` | Inspect captures at cursor position |
 
 ## Context Detection
 
@@ -229,14 +234,14 @@ nvim --headless -u NONE \
 
 ### Reloading queries
 
-During development, use `:TreesitterRailsReload` to reload all query modules without restarting Neovim.
+During development, use `:TSRailsReload` to reload all query modules without restarting Neovim.
 
 ### Adding new patterns
 
 1. Identify the context (model, controller, etc.)
-2. Edit the corresponding query file in `lua/treesitter-rails/queries/`
+2. Edit the corresponding `.scm` file in `queries/` (e.g., `queries/model.scm`)
 3. Use Tree-sitter query syntax with the plugin's capture naming convention
-4. Test with `:TreesitterRailsReload`
+4. Test with `:TSRailsReload`
 
 ### Testing queries
 

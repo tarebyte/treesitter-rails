@@ -1,10 +1,3 @@
---- Controller query patterns for treesitter-rails
---- Covers filters, response methods, helpers, and controller configuration
---- @module treesitter-rails.queries.controller
-
-local M = {}
-
-M.query = [[
 ; =============================================================================
 ; Controller Filters (Callbacks)
 ; =============================================================================
@@ -247,11 +240,4 @@ M.query = [[
 
 ((call
   method: (identifier) @function.macro.rails
-  (#any-of? @function.macro.rails
-    "include"
-    "extend"
-    "prepend"
-    "concerns")))
-]]
-
-return M
+  (#eq? @function.macro.rails "concerns")))

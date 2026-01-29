@@ -1,9 +1,3 @@
---- Common Rails patterns that apply across all contexts
---- @module treesitter-rails.queries.common
-
-local M = {}
-
-M.query = [[
 ; =============================================================================
 ; ActiveSupport Core Extensions
 ; =============================================================================
@@ -220,6 +214,3 @@ M.query = [[
     "terabyte" "terabytes"
     "petabyte" "petabytes"
     "exabyte" "exabytes")))
-]]
-
-return M

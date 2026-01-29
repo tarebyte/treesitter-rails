@@ -1,10 +1,3 @@
---- Mailer query patterns for treesitter-rails
---- Covers ActionMailer DSL
---- @module treesitter-rails.queries.mailer
-
-local M = {}
-
-M.query = [[
 ; =============================================================================
 ; Mail Configuration
 ; =============================================================================
@@ -120,6 +113,3 @@ M.query = [[
   (#any-of? @variable.builtin.rails
     "params"
     "message"))
-]]
-
-return M

@@ -1,10 +1,3 @@
---- Routes query patterns for treesitter-rails
---- Covers Rails routing DSL
---- @module treesitter-rails.queries.routes
-
-local M = {}
-
-M.query = [[
 ; =============================================================================
 ; HTTP Verb Methods
 ; =============================================================================
@@ -175,6 +168,3 @@ M.query = [[
   method: (identifier) @keyword.rails.route
   (#any-of? @keyword.rails.route
     "map")))
-]]
-
-return M
