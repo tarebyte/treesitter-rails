@@ -16,7 +16,8 @@ This plugin provides context-aware highlighting for Rails projects by detecting 
   - **Jobs**: ActiveJob configuration, callbacks, queue settings
   - **Mailers**: mail configuration, delivery methods, attachments
   - **Tests**: Minitest assertions and RSpec DSL
-- **Global ActiveSupport patterns** - Time helpers, byte helpers, delegation, class attributes
+- **Common ActiveSupport patterns** - Time helpers (`1.day.ago`), byte helpers, delegation, class attributes (applied only in Rails contexts)
+- **Packwerk/packs support** - Works with modular Rails monoliths (`packs/`, `packages/`, `components/`, `engines/`)
 - **High performance** - Uses Neovim's decoration provider API with ephemeral extmarks
 - **Configurable** - Enable/disable specific contexts, adjust highlight priority
 
@@ -103,7 +104,7 @@ require('treesitter-rails').setup({
 
 ## Context Detection
 
-Files are assigned contexts based on their path:
+Files are assigned contexts based on their path. The plugin looks for these patterns **anywhere** in the file path, so it works with standard Rails structure and modular architectures like Packwerk.
 
 | Path Pattern | Context |
 |--------------|---------|
@@ -119,6 +120,17 @@ Files are assigned contexts based on their path:
 | `config/routes/**/*.rb` | `routes` |
 | `test/**/*_test.rb` | `minitest` |
 | `spec/**/*_spec.rb` | `rspec` |
+
+### Packwerk / Packs Support
+
+The plugin automatically works with modular Rails monoliths. These paths are all detected correctly:
+
+```
+packs/billing/app/models/invoice.rb        → model
+packages/auth/app/controllers/sessions.rb  → controller
+components/core/app/jobs/sync_job.rb       → job
+engines/payments/spec/models/card_spec.rb  → rspec
+```
 
 ## Highlight Groups
 
@@ -199,6 +211,21 @@ This plugin focuses specifically on syntax highlighting, complementing vim-rails
 | Performance | O(visible lines) | O(file size) |
 
 ## Development
+
+### Running Tests
+
+```bash
+./tests/run.sh
+```
+
+Or run individual test files:
+
+```bash
+nvim --headless -u NONE \
+  -c "set runtimepath+=." \
+  -c "luafile tests/context_spec.lua" \
+  -c "q"
+```
 
 ### Reloading queries
 

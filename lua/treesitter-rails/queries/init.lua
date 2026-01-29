@@ -10,6 +10,7 @@ M.cache = {}
 --- Map of context names to their query module names
 --- @type table<string, string>
 M.query_modules = {
+  common = 'treesitter-rails.queries.common',
   model = 'treesitter-rails.queries.model',
   controller = 'treesitter-rails.queries.controller',
   view = 'treesitter-rails.queries.view',
@@ -72,6 +73,12 @@ function M.get(context)
 
   M.cache[context] = query
   return query
+end
+
+--- Get the parsed common query (applies to all Rails contexts)
+--- @return vim.treesitter.Query|nil
+function M.get_common()
+  return M.get('common')
 end
 
 --- Clear the query cache

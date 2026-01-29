@@ -1,7 +1,9 @@
-; treesitter-rails: Global Rails DSL patterns
-; These patterns apply to all Ruby files in a Rails project
-; They highlight ActiveSupport extensions and common Rails patterns
+--- Common Rails patterns that apply across all contexts
+--- @module treesitter-rails.queries.common
 
+local M = {}
+
+M.query = [[
 ; =============================================================================
 ; ActiveSupport Core Extensions
 ; =============================================================================
@@ -43,7 +45,7 @@
     "class_methods"
     "prepended")))
 
-; ActiveSupport::Concern extend
+; ActiveSupport::Concern extend (specific pattern, not generic extend)
 ((call
   method: (identifier) @function.macro.rails
   (#eq? @function.macro.rails "extend")
@@ -53,17 +55,6 @@
       name: (constant) @_concern
       (#eq? @_activesupport "ActiveSupport")
       (#eq? @_concern "Concern")))))
-
-; =============================================================================
-; Module Inclusion
-; =============================================================================
-
-((call
-  method: (identifier) @function.macro.rails
-  (#any-of? @function.macro.rails
-    "include"
-    "extend"
-    "prepend")))
 
 ; =============================================================================
 ; Deprecation
@@ -94,18 +85,7 @@
 
 ((call
   method: (identifier) @function.macro.rails
-  (#any-of? @function.macro.rails
-    "config_accessor")))
-
-; =============================================================================
-; Autoloading
-; =============================================================================
-
-((call
-  method: (identifier) @function.macro.rails
-  (#any-of? @function.macro.rails
-    "autoload"
-    "eager_autoload")))
+  (#eq? @function.macro.rails "config_accessor")))
 
 ; =============================================================================
 ; Rails.application and Rails.env
@@ -181,7 +161,6 @@
 ; =============================================================================
 
 ; Numeric time helpers: 1.day, 2.hours, etc.
-; Note: These are method calls on numeric literals
 ((call
   receiver: (integer)
   method: (identifier) @function.rails.helper
@@ -241,3 +220,6 @@
     "terabyte" "terabytes"
     "petabyte" "petabytes"
     "exabyte" "exabytes")))
+]]
+
+return M

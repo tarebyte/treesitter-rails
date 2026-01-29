@@ -37,13 +37,12 @@ local function get_tree(bufnr)
   return trees and trees[1] or nil
 end
 
---- Apply highlights for a range in a buffer
+--- Apply highlights for a query in a range
 --- @param bufnr number Buffer number
---- @param ctx string Context name
+--- @param query vim.treesitter.Query|nil The parsed query
 --- @param start_row number Start row (0-indexed)
 --- @param end_row number End row (0-indexed)
-local function apply_highlights(bufnr, ctx, start_row, end_row)
-  local query = queries.get(ctx)
+local function apply_highlights_for_query(bufnr, query, start_row, end_row)
   if not query then
     return
   end
@@ -74,6 +73,19 @@ local function apply_highlights(bufnr, ctx, start_row, end_row)
       })
     end
   end
+end
+
+--- Apply highlights for a range in a buffer
+--- @param bufnr number Buffer number
+--- @param ctx string Context name
+--- @param start_row number Start row (0-indexed)
+--- @param end_row number End row (0-indexed)
+local function apply_highlights(bufnr, ctx, start_row, end_row)
+  -- Apply common Rails patterns first
+  apply_highlights_for_query(bufnr, queries.get_common(), start_row, end_row)
+
+  -- Apply context-specific highlights
+  apply_highlights_for_query(bufnr, queries.get(ctx), start_row, end_row)
 end
 
 --- Decoration provider callbacks
